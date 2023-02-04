@@ -7,3 +7,13 @@ export const db = knex({
   },
   useNullAsDefault: true,
 });
+
+export type User = {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+};
+
+export const PASSWORD_SALT_ROUNDS = 10;

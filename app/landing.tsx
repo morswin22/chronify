@@ -1,4 +1,5 @@
-import Head from 'next/head';
+"use client";
+
 import {
   Box,
   Heading,

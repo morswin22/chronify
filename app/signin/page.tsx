@@ -1,8 +1,41 @@
 "use client";
 
-import { Flex, Box, FormControl, FormLabel, Input, Checkbox, Stack, Link, Button, Heading, Text, useColorModeValue } from '@chakra-ui/react';
+import { Flex, Box, FormControl, FormLabel, Input, Checkbox, Stack, Link, Button, Heading, Text, useColorModeValue, FormErrorMessage } from '@chakra-ui/react';
+import { useFormik } from 'formik';
+import * as yup from 'yup';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { SinginCredentials, SigninResponse } from '@/pages/api/signin';
 
 export default function LoginPage() {
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+
+  const formik = useFormik<SinginCredentials>({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: yup.object({
+      email: yup.string().email('Invalid email address').required('Email is required'),
+      password: yup.string().required('Password is required'),
+    }),
+    onSubmit: async (values) => {
+      const request = await fetch('/api/signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
+      const response = await request.json() as SigninResponse;
+      if (request.status == 200)
+        router.push('/');
+      else
+        setError(response.message);
+    },
+  });
+
   return (
     <Flex
       minH={'100vh'}
@@ -21,14 +54,26 @@ export default function LoginPage() {
           bg={useColorModeValue('white', 'gray.700')}
           boxShadow={'lg'}
           p={8}>
-          <Stack spacing={4}>
-            <FormControl id="email">
+          <Stack spacing={4} as="form" onSubmit={formik.handleSubmit}>
+            <FormControl id="email" isInvalid={formik.errors.email ?? error}>
               <FormLabel>Email address</FormLabel>
-              <Input type="email" />
+              <Input 
+                type="email" 
+                value={formik.values.email}
+                onChange={e => { setError(null); formik.handleChange(e); }}
+                onBlur={formik.handleBlur}
+              />
+              <FormErrorMessage>{formik.errors.email}</FormErrorMessage>
             </FormControl>
-            <FormControl id="password">
+            <FormControl id="password" isInvalid={formik.errors.password ?? error}>
               <FormLabel>Password</FormLabel>
-              <Input type="password" />
+              <Input 
+                type="password"
+                value={formik.values.password}
+                onChange={e => { setError(null); formik.handleChange(e); }}
+                onBlur={formik.handleBlur}
+              />
+              <FormErrorMessage>{formik.errors.password ?? error}</FormErrorMessage>
             </FormControl>
             <Stack spacing={10}>
               <Stack
@@ -39,6 +84,9 @@ export default function LoginPage() {
                 <Link color={'blue.400'} href="/forgot-password">Forgot password?</Link>
               </Stack>
               <Button
+                type="submit"
+                isLoading={formik.isSubmitting}
+                loadingText="Signing in"
                 bg={'blue.400'}
                 color={'white'}
                 _hover={{

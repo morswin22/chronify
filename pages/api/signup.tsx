@@ -1,5 +1,6 @@
-import { db } from '@/lib/db';
+import { db, PASSWORD_SALT_ROUNDS } from '@/lib/db';
 import { NextApiResponse, NextApiRequest } from 'next'
+import bcrypt from 'bcrypt';
 
 export type SingupCredentials = {
   firstName: string;
@@ -32,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     firstName,
     lastName,
     email,
-    password,
+    password: bcrypt.hashSync(password, PASSWORD_SALT_ROUNDS),
   });
 
   res.status(200).json({ id, firstName, lastName, email, password });
