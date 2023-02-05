@@ -1,5 +1,5 @@
 import { cookies, headers } from 'next/headers';
-import type { User } from '@/lib/db';
+import type { User } from '@/lib/user';
 
 export async function getUser() {
   // TODO review this code

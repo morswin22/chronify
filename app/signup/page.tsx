@@ -15,7 +15,6 @@ import {
   Heading,
   Text,
   useColorModeValue,
-  Link,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
@@ -23,6 +22,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { SingupCredentials, SignupResponse } from '@/pages/api/signup';
 import { useRouter } from 'next/navigation';
+import Link from '@/components/link';
 
 export default function SignupCard() {
   const [showPassword, setShowPassword] = useState(false);

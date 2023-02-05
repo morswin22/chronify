@@ -1,5 +1,6 @@
 "use client";
 
+import Link from '@/components/link';
 import {
   Box,
   Heading,
@@ -38,7 +39,7 @@ export default function LandingPage() {
           alignSelf={'center'}
           position={'relative'}>
           <Button
-            as={"a"} href="/signup"
+            as={Link} href="/signup"
             colorScheme={'green'}
             bg={'green.400'}
             rounded={'full'}
@@ -48,7 +49,7 @@ export default function LandingPage() {
             }}>
             Get Started
           </Button>
-          <Button as={"a"} variant={'link'} colorScheme={'blue'} size={'sm'} href="/about">
+          <Button as={Link} variant={'link'} colorScheme={'blue'} size={'sm'} href="/about">
             Learn more
           </Button>
         </Stack>

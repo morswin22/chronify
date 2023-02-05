@@ -1,20 +1,12 @@
 import LandingPage from "@/app/landing";
 import Navbar from "@/components/navbar";
-import { getUser } from "@/components/userssr";
-import DashboardPage from "@/app/dashboard";
 
-export default async function HomePage() {
-  const user = await getUser();
-
+export default function HomePage() {
   return (
     <>
       <Navbar />
       <main>
-        {user ? 
-          <DashboardPage />
-          :
-          <LandingPage />
-        }
+        <LandingPage />
       </main>
     </>
   )

@@ -1,15 +1,18 @@
 "use client";
 
-import { Flex, Box, FormControl, FormLabel, Input, Checkbox, Stack, Link, Button, Heading, Text, useColorModeValue, FormErrorMessage } from '@chakra-ui/react';
+import { Flex, Box, FormControl, FormLabel, Input, Checkbox, Stack, Button, Heading, Text, useColorModeValue, FormErrorMessage } from '@chakra-ui/react';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { SinginCredentials, SigninResponse } from '@/pages/api/signin';
+import Link from '@/components/link';
+import { useUser } from '@/components/usercsr';
 
 export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { revalidateUser } = useUser();
 
   const formik = useFormik<SinginCredentials>({
     initialValues: {
@@ -29,9 +32,10 @@ export default function LoginPage() {
         body: JSON.stringify(values),
       });
       const response = await request.json() as SigninResponse;
-      if (request.status == 200)
-        router.push('/');
-      else
+      if (request.status == 200) {
+        revalidateUser();
+        router.push('/dashboard');
+      } else
         setError(response.message);
     },
   });

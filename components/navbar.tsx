@@ -1,12 +1,10 @@
 "use client";
 
-import { ReactNode } from 'react';
 import {
   Box,
   Flex,
   Avatar,
   HStack,
-  Link,
   IconButton,
   Button,
   Menu,
@@ -21,26 +19,30 @@ import {
 } from '@chakra-ui/react';
 import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
 import { useUser } from './usercsr';
+import Link from './link';
+import { useRouter } from 'next/navigation';
 
-const Links: string[] = [/*'Dashboard', 'Projects', 'Team'*/];
+type Route = {
+  name: string;
+  path: string;
+};
 
-const NavLink = ({ children }: { children: ReactNode }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={'md'}
-    _hover={{
-      textDecoration: 'none',
-      bg: useColorModeValue('gray.200', 'gray.700'),
-    }}
-    href={'#'}>
-    {children}
-  </Link>
-);
+const Links: Route[] = [{ name: 'Dashboard', path: '/dashboard' }];
 
 export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const user = useUser();
+  const { user, revalidateUser } = useUser();
+  const router = useRouter();
+
+  const signOut = () => {
+    fetch('/api/signout', { credentials: 'include', cache: 'no-cache' })
+      .then(res => {
+        if (res.status === 200) {
+          revalidateUser();
+          router.push('/signin');
+        } // TODO: handle error
+      });
+  };
 
   return (
     <>
@@ -54,52 +56,84 @@ export default function Navbar() {
             onClick={isOpen ? onClose : onOpen}
           />
           <HStack spacing={8} alignItems={'center'}>
-            <HStack>
-              <Image 
-                h="30px"
-                src="/favicon.ico" />
-              <Image 
-                h="30px"
-                src="/logo.svg" />
-            </HStack>
+            <Link href="/">
+              <HStack>
+                <Image 
+                  h="30px"
+                  src="/favicon.ico" />
+                <Image 
+                  h="30px"
+                  src="/logo.svg" />
+              </HStack>
+            </Link>
             <HStack
               as={'nav'}
               spacing={4}
               display={{ base: 'none', md: 'flex' }}>
-              {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+              {Links.map(({ name, path }) => (
+                <Link
+                  key={name}
+                  px={2}
+                  py={1}
+                  rounded={'md'}
+                  _hover={{
+                    textDecoration: 'none',
+                    bg: useColorModeValue('gray.200', 'gray.700'),
+                  }}
+                  href={path}>
+                  {name}
+                </Link>
               ))}
             </HStack>
           </HStack>
           <Flex alignItems={'center'}>
-            <Menu>
-              <MenuButton
-                as={Button}
-                rounded={'full'}
-                variant={'link'}
-                cursor={'pointer'}
-                minW={0}>
+            {user ? (
+              <Menu>
+                <MenuButton
+                  as={Button}
+                  rounded={'full'}
+                  variant={'link'}
+                  cursor={'pointer'}
+                  minW={0}>
+                  <Avatar
+                    size={'sm'}
+                    name={`${user.firstName} ${user.lastName}`}
+                    src={undefined}
+                  />
+                </MenuButton>
+                <MenuList>
+                  <MenuItem>Profile</MenuItem>
+                  <MenuItem>Data</MenuItem>
+                  <MenuDivider />
+                  <MenuItem onClick={signOut}>Sign out</MenuItem>
+                </MenuList>
+              </Menu>
+            ) : (
+              <Link href="/signin">
                 <Avatar
                   size={'sm'}
-                  name={user ? `${user.firstName} ${user.lastName}` : undefined}
-                  src={undefined}
                 />
-              </MenuButton>
-              <MenuList>
-                <MenuItem>Link 1</MenuItem>
-                <MenuItem>Link 2</MenuItem>
-                <MenuDivider />
-                <MenuItem>Link 3</MenuItem>
-              </MenuList>
-            </Menu>
+              </Link>
+            )}
           </Flex>
         </Flex>
 
         {isOpen ? (
           <Box pb={4} display={{ md: 'none' }}>
             <Stack as={'nav'} spacing={4}>
-              {Links.map((link) => (
-                <NavLink key={link}>{link}</NavLink>
+              {Links.map(({ name, path }) => (
+                <Link
+                  key={name}
+                  px={2}
+                  py={1}
+                  rounded={'md'}
+                  _hover={{
+                    textDecoration: 'none',
+                    bg: useColorModeValue('gray.200', 'gray.700'),
+                  }}
+                  href={path}>
+                  {name}
+                </Link>
               ))}
             </Stack>
           </Box>

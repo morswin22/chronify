@@ -3,7 +3,7 @@
 import { UserContext } from "@/components/usercsr";
 import { User } from "@/lib/db";
 import { ChakraProvider } from "@chakra-ui/react"
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function RootLayout({
   children,
@@ -12,17 +12,19 @@ export default function RootLayout({
 }) {
   const [user, setUser] = useState<User | null>(null);
 
-  useEffect(() => {
+  const fetchUser = useCallback(() => {
     fetch("/api/user", { credentials: "include", cache: "no-cache" })
       .then(res => res.json())
       .then(setUser);
   }, []);
 
+  useEffect(fetchUser, []);
+
   return (
     <html lang="en">
       <head />
       <body>
-        <UserContext.Provider value={user}>
+        <UserContext.Provider value={{ user, revalidateUser: fetchUser }}>
           <ChakraProvider>
             {children}
           </ChakraProvider>

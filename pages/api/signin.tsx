@@ -1,4 +1,5 @@
-import { db, User } from '@/lib/db';
+import { db } from '@/lib/db';
+import type { User } from '@/lib/user';
 import { NextApiResponse, NextApiRequest } from 'next'
 import bcrypt from 'bcrypt';
 import { withSessionAPI } from '@/lib/session';
