@@ -15,9 +15,11 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
-  Image
+  Image,
+  useColorMode,
+  Icon
 } from '@chakra-ui/react';
-import { HamburgerIcon, CloseIcon } from '@chakra-ui/icons';
+import { HamburgerIcon, CloseIcon, SunIcon, MoonIcon } from '@chakra-ui/icons';
 import { useUser } from './usercsr';
 import Link from './link';
 import { useRouter } from 'next/navigation';
@@ -33,6 +35,7 @@ export default function Navbar() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { user, revalidateUser } = useUser();
   const router = useRouter();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   const signOut = () => {
     fetch('/api/signout', { credentials: 'include', cache: 'no-cache' })
@@ -104,6 +107,9 @@ export default function Navbar() {
                 <MenuList>
                   <MenuItem>Profile</MenuItem>
                   <MenuItem>Data</MenuItem>
+                  <MenuItem onClick={toggleColorMode}>
+                    Toggle theme&nbsp;<Icon as={colorMode === 'light' ? SunIcon : MoonIcon} />
+                  </MenuItem>
                   <MenuDivider />
                   <MenuItem onClick={signOut}>Sign out</MenuItem>
                 </MenuList>

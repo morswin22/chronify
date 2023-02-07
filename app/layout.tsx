@@ -1,9 +1,16 @@
 "use client";
 
 import { UserContext } from "@/components/usercsr";
-import { User } from "@/lib/db";
-import { ChakraProvider } from "@chakra-ui/react"
+import { User } from "@/lib/user";
+import { ChakraProvider, extendTheme, localStorageManager, ThemeConfig } from "@chakra-ui/react"
 import { useCallback, useEffect, useState } from "react";
+
+const config: ThemeConfig = {
+  initialColorMode: 'system',
+  useSystemColorMode: true,
+};
+
+const theme = extendTheme({ config });
 
 export default function RootLayout({
   children,
@@ -25,7 +32,7 @@ export default function RootLayout({
       <head />
       <body>
         <UserContext.Provider value={{ user, revalidateUser: fetchUser }}>
-          <ChakraProvider>
+          <ChakraProvider colorModeManager={localStorageManager} theme={theme}>
             {children}
           </ChakraProvider>
         </UserContext.Provider>
