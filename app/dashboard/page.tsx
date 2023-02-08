@@ -3,12 +3,15 @@
 import {
   Box,
   Container,
-  Text,
-  Button,
   Stack,
+  Text,
 } from '@chakra-ui/react';
+import { useState } from 'react';
+import CategoriesCard, { Category } from './categories';
 
 export default function DashboardPage() {
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+
   return (
     <Container maxW={'3xl'}>
       <Stack
@@ -17,9 +20,8 @@ export default function DashboardPage() {
         spacing={{ base: 8, md: 14 }}
         py={{ base: 20, md: 36 }}
       >
-        <Text color={'gray.500'}>
-          This is the dashboard page.
-        </Text>
+        <CategoriesCard onCategoryChange={setSelectedCategory} />
+        <Text>{selectedCategory?.name}</Text>
       </Stack>
     </Container>
   );
